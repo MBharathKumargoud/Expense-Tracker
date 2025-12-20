@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="Login.css" />
+    <title>Login - Expense Tracker</title>
+</head>
+<body>
+    <div id="container">
+        <form id="login-form">
+            <h1>Login</h1>
+            <input type="email" id="login-email" placeholder="Email" required />
+            <input type="password" id="login-password" placeholder="Password" required />
+            <div id="Login-reg">
+                <button type="submit" class="Login">Login</button>
+            </div>
+            <div id="forgot">
+                <a href="#" class="Forgot" onclick="showForgotPasswordForm()">Forgot password?</a>
+            </div>
+            <div class="register-link">
+                Don't have an account? <a href="Register.html">Register here</a>
+            </div>
+        </form>
+
+        <!-- Forgot Password Form (Hidden by default) -->
+        <form id="forgot-password-form" style="display: none;">
+            <h2>Reset Password</h2>
+            <input type="email" id="reset-email" placeholder="Enter your email" required />
+            <div id="reset-section" style="display: none;">
+                <input type="password" id="new-password" placeholder="New password" 
+                    pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
+                    title="Password must be at least 8 characters long and include at least one letter, one number, and one special character" required />
+                <input type="password" id="confirm-new-password" placeholder="Confirm new password" required />
+            </div>
+            <div id="Login-reg">
+                <button type="submit" class="Login">Reset Password</button>
+            </div>
+            <div>
+                <a href="#" onclick="showLoginForm()">Back to Login</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="db.js"></script>
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+
+        // Login form submission
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                await loginUser(email, password);
+                window.location.href = 'Home.html';
+            } catch (error) {
+                alert('Login failed: Invalid credentials');
+            }
+        });
+
+        // Forgot password form submission
+        forgotPasswordForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('reset-email').value;
+            const resetSection = document.getElementById('reset-section');
+            
+            if (resetSection.style.display === 'none') {
+                // First step: Show password reset fields
+                resetSection.style.display = 'block';
+                return;
+            }
+
+            const newPassword = document.getElementById('new-password').value;
+            const confirmNewPassword = document.getElementById('confirm-new-password').value;
+
+            if (newPassword !== confirmNewPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            try {
+                await resetPassword(email, newPassword);
+                alert('Password reset successful!');
+                showLoginForm();
+            } catch (error) {
+                alert('Password reset failed: ' + error);
+            }
+        });
+
+        function showForgotPasswordForm() {
+            loginForm.style.display = 'none';
+            forgotPasswordForm.style.display = 'block';
+            document.getElementById('reset-section').style.display = 'none';
+        }
+
+        function showLoginForm() {
+            loginForm.style.display = 'block';
+            forgotPasswordForm.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
