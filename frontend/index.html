@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Expense Tracker</title>
-    <link rel="stylesheet" href="./ExpenseTracker_all_files/Register.css">
+    <link rel="stylesheet" href="css/Register.css">
 </head>
 <body>
     <div class="container">
@@ -30,18 +30,19 @@
                 <button type="submit" class="Register">Register</button>
             </div>
             <div class="login-link">
-                Already have an account? <a href="./ExpenseTracker_all_files/Login.html">Login here</a>
+                Already have an account? <a href="pages/Login.html">Login here</a>
             </div>
         </form>
     </div>
-    <script src="./ExpenseTracker_all_files/db.js"></script>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
     <script>
         const form = document.getElementById('register-form');
         const password = document.getElementById('register-password');
         const confirmPassword = document.getElementById('confirm-password');
         const passwordMessage = document.getElementById('password-match-message');
 
-        // Password requirements validation
         password.addEventListener('input', function() {
             const lengthReq = document.getElementById('length');
             const letterReq = document.getElementById('letter');
@@ -55,7 +56,6 @@
             specialReq.style.color = /[@$!%*#?&]/.test(val) ? 'green' : 'red';
         });
 
-        // Password match validation
         confirmPassword.addEventListener('input', function() {
             if (this.value !== password.value) {
                 passwordMessage.textContent = 'Passwords do not match';
@@ -71,20 +71,20 @@
             
             const email = document.getElementById('register-email').value;
             const username = document.getElementById('register-username').value;
-            const password = document.getElementById('register-password').value;
+            const pass = document.getElementById('register-password').value;
             const confirmPass = document.getElementById('confirm-password').value;
 
-            if (password !== confirmPass) {
+            if (pass !== confirmPass) {
                 alert('Passwords do not match!');
                 return;
             }
 
             try {
-                await registerUser(email, username, password);
-                alert('Registration successful!');
-                window.location.href = './ExpenseTracker_all_files/Login.html';
+                await registerUser(email, username, pass);
+                alert('Registration successful! Please login.');
+                window.location.href = 'pages/Login.html';
             } catch (error) {
-                alert('Registration failed: ' + error);
+                alert('Registration failed: ' + (error.message || error));
             }
         });
     </script>

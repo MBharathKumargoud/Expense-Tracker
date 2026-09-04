@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="start.css" />
+    <link rel="stylesheet" type="text/css" href="../css/start.css" />
     <title>View Expenses - Expense Tracker</title>
     <style>
         .dashboard {
@@ -21,26 +21,36 @@
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            min-height: 350px;
         }
         .expense-table {
             flex: 2;
-            min-width: 600px;
+            min-width: 300px;
             padding: 20px;
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
         }
         .filters {
             width: 100%;
-            padding: 10px;
+            padding: 15px;
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+        }
+        .filters select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 1em;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 10px;
         }
         th, td {
             padding: 12px;
@@ -84,6 +94,16 @@
         .delete-btn:hover {
             background-color: #c82333;
         }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+                padding: 10px;
+            }
+            .expense-table, .chart-container {
+                min-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -97,7 +117,7 @@
 
     <div class="dashboard">
         <div class="filters">
-            <label for="filter-category">Filter by Category:</label>
+            <label for="filter-category"><strong>Filter by Category:</strong> </label>
             <select id="filter-category" onchange="filterExpenses()">
                 <option value="All">All Categories</option>
                 <option value="Food">Food</option>
@@ -122,7 +142,7 @@
                 <tbody id="expense-list"></tbody>
             </table>
             <div class="total-amount">
-                <strong>Total:</strong> $<span id="total-amount">0</span>
+                <strong>Total:</strong> $<span id="total-amount">0.00</span>
             </div>
         </div>
 
@@ -132,29 +152,22 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="db.js"></script>
-    <script src="expenses.js"></script>    <script>
-        // Make handleDelete function available globally
+    <script src="../js/api.js"></script>
+    <script src="../js/expenses.js"></script>
+    <script>
         window.handleDelete = async function(expenseId) {
             if (confirm('Are you sure you want to delete this expense?')) {
                 try {
                     await deleteExpense(expenseId);
-                    await loadAndDisplayExpenses(); // Reload the expenses after deletion
-                    const expenses = await getExpenses();
-                    updatePieChart(expenses); // Update the pie chart
+                    await loadAndDisplayExpenses();
                 } catch (error) {
-                    alert('Error deleting expense: ' + error);
+                    alert('Error deleting expense: ' + (error.message || error));
                 }
             }
         };
 
-        // Check if user is logged in and load expenses
         document.addEventListener('DOMContentLoaded', function() {
-            const currentUser = sessionStorage.getItem('currentUser');
-            if (!currentUser) {
-                window.location.href = 'Login.html';
-                return;
-            }
+            checkAuthGuard();
             loadAndDisplayExpenses();
         });
     </script>

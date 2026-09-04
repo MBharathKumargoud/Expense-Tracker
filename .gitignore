@@ -1,0 +1,24 @@
+# Maven & Build output
+target/
+*.class
+
+# IDE & Editor files
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Sensitive Configuration & Credentials
+application.properties
+.env
+
+# Logs
+*.log
+logs/
+
+# OS temporary files
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -3,38 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="start.css" />
+    <link rel="stylesheet" type="text/css" href="../css/start.css" />
     <title>Add Expense - Expense Tracker</title>
-    <style>
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-            background: white;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .success-message {
-            display: none;
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px;
-            border-radius: 4px;
-            margin: 10px 0;
-            text-align: center;
-        }
-        .nav-button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #000080;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .nav-button:hover {
-            background-color: #5254f8;
-        }
-    </style>
 </head>
 <body>
     <div class="nav-buttons">
@@ -43,16 +13,16 @@
     </div>
 
     <div id="logo-dec">
-        <img src="logo.jpg" alt="logoImage" class="logo_icon">
+        <img src="../assets/logo.jpg" alt="logoImage" class="logo_icon">
         <h1>Expense Tracker</h1>
     </div>
     
     <div class="container">
-        <div id="success-message" class="success-message">
-            Expense added successfully!
-        </div>
-
         <form id="expense-form">
+            <div id="success-message" class="success-message">
+                Expense added successfully!
+            </div>
+            
             <h1>Enter your Expenses</h1>
             <input type="text" id="expense-name" placeholder="Expense Name" required 
                    pattern="[A-Za-z0-9\s-]{3,50}" 
@@ -75,44 +45,27 @@
         </form>
     </div>
 
-    <script src="db.js"></script>
-    <script src="expenses.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/expenses.js"></script>
     <script>
-        // Check if user is logged in
         document.addEventListener('DOMContentLoaded', function() {
-            const currentUser = sessionStorage.getItem('currentUser');
-            if (!currentUser) {
-                alert('Please login first');
-                window.location.href = 'Login.html';
-                return;
-            }
+            checkAuthGuard();
+            document.getElementById('expense-date').valueAsDate = new Date();
         });
 
-        // Set default date to today
-        document.getElementById('expense-date').valueAsDate = new Date();        // Handle form submission
         document.getElementById('expense-form').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             try {
-                // Get and validate form values
                 const expenseName = document.getElementById('expense-name').value.trim();
                 const expenseAmount = parseFloat(document.getElementById('expense-amount').value);
                 const expenseCategory = document.getElementById('expense-category').value;
                 const expenseDate = document.getElementById('expense-date').value;
 
-                // Additional validation
-                if (!expenseName) {
-                    throw new Error("Please enter an expense name");
-                }
-                if (isNaN(expenseAmount) || expenseAmount <= 0) {
-                    throw new Error("Please enter a valid amount greater than 0");
-                }
-                if (!expenseCategory) {
-                    throw new Error("Please select a category");
-                }
-                if (!expenseDate) {
-                    throw new Error("Please select a date");
-                }
+                if (!expenseName) throw new Error("Please enter an expense name");
+                if (isNaN(expenseAmount) || expenseAmount <= 0) throw new Error("Please enter a valid amount greater than 0");
+                if (!expenseCategory) throw new Error("Please select a category");
+                if (!expenseDate) throw new Error("Please select a date");
 
                 const expense = {
                     name: expenseName,
@@ -121,32 +74,26 @@
                     date: expenseDate
                 };
 
-                // Try to add the expense
                 await addExpense(expense);
                 
-                // Show success message
                 const successMessage = document.getElementById('success-message');
                 successMessage.style.display = 'block';
                 successMessage.textContent = 'Expense added successfully!';
                 successMessage.style.backgroundColor = '#4CAF50';
                 
-                // Reset form
                 this.reset();
                 document.getElementById('expense-date').valueAsDate = new Date();
                 
-                // Hide success message after 3 seconds
                 setTimeout(() => {
                     successMessage.style.display = 'none';
                 }, 3000);
 
             } catch (error) {
-                // Show error message
                 const successMessage = document.getElementById('success-message');
                 successMessage.style.display = 'block';
                 successMessage.textContent = error.message || 'Error adding expense';
                 successMessage.style.backgroundColor = '#f44336';
                 
-                // Hide error message after 3 seconds
                 setTimeout(() => {
                     successMessage.style.display = 'none';
                 }, 3000);
