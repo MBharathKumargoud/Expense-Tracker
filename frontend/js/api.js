@@ -1,5 +1,4 @@
-const API_BASE_URL = 'https://expense-tracker-production-74d7.up.railway.app/api';
-
+const API_BASE_URL = 'https://expensetracker-production-8cf8.up.railway.app/api';
 const API = {
     getToken() {
         return localStorage.getItem('jwt_token');
