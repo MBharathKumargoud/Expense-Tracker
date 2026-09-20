@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://expense-tracker-1-wzji.onrender.com/api';
+const API_BASE_URL = 'https://expense-tracker-1-wzij.onrender.com/api';
 const API = {
     getToken() {
         return localStorage.getItem('jwt_token');
